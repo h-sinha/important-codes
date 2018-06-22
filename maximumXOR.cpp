@@ -51,7 +51,6 @@ void remove(node *root,int num)
 		int temp=(num>>i)&1;
 		root=root->child[temp];
 		root->freq--;
-		// if(root->freq==0)delete root;
 	}
 }
 int query(node *root,int num)
