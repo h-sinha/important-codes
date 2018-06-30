@@ -29,8 +29,8 @@ ll fastexpo(ll x,ll y,ll m)
 		y>>=1;
 	}return temp;
 }
-int size_of_base;
-std::vector<int> baseArray(L),seg(4*L),lazy(4*L);
+ll size_of_base;
+std::vector<ll> baseArray(L),seg(4*L),lazy(4*L);
 void build(int start = 1, int end = size_of_base, int index = 1)
 {
 	if( start == end )
@@ -44,7 +44,6 @@ void build(int start = 1, int end = size_of_base, int index = 1)
 	seg[index] = (seg[2*index] + seg[2*index + 1]);
 	return;
 }
-
 void lazyUpdate(int start, int end, int index)
 {
 	if(lazy[index] != 0)
@@ -59,7 +58,7 @@ void lazyUpdate(int start, int end, int index)
 	}
 	return;
 }
-void updateRange(int l, int r, int value, int start = 1, int end = size_of_base, int index = 1)
+void updateRange(int l, int r, ll value, int start = 1, int end = size_of_base, int index = 1)
 {
 	lazyUpdate(start, end, index);
 	if(r < start || l > end || start > end )return;
@@ -79,7 +78,7 @@ void updateRange(int l, int r, int value, int start = 1, int end = size_of_base,
 	seg[index] = (seg[2*index] + seg[2*index + 1]) ;
 	return;
 }
-int query(int l, int r, int start = 1, int end = size_of_base, int index = 1)
+ll query(int l, int r, int start = 1, int end = size_of_base, int index = 1)
 {
 	lazyUpdate(start, end, index);
 	if( start > r || end < l || start > end)
@@ -95,10 +94,10 @@ int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	int operations, idx, value, l, r;
+	ll operations, idx, value, l, r;
 	char type;
 	cin >> size_of_base;
-	for (int i = 1; i <= size_of_base; ++i)
+	for (ll i = 1; i <= size_of_base; ++i)
 		cin >> baseArray[i];
 	build();
 	cin >> operations;
