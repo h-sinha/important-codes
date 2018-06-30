@@ -57,14 +57,15 @@ void update(int updateindex, int start = 1, int end = size_of_base, int index = 
 	seg[index] = min( seg[ 2*index ] , seg[ 2*index + 1] );
 	return;
 }
-int query(int l, int r, int start = 1, int end = size_of_base, int index = 1)
+ll query(int l, int r, int start = 1, int end = size_of_base, int index = 1)
 {
 	if( start > r || end < l )return INT_MAX;
 	if(start >= l && end <= r)
 	{
 		return seg[index];
 	}
-	int mid = (start + end)/2, query_left, query_right;
+	int mid = (start + end)/2;
+	ll query_left, query_right;
 	query_left = query(l, r, start, mid, 2*index );
 	query_right = query(l, r, mid+1, end, 2*index + 1);
 	return min(query_left, query_right);
