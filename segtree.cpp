@@ -1,65 +1,99 @@
 #include<bits/stdc++.h>
 using namespace std;
-#define FOR(i, a, b) for (int i = (a); i < (b); ++i)
-#define RFOR(i, a, b) for (int i = (a); i >= (b); --i)
-#define pb push_back
+#define FOR(i,a,b) 	for(int i=a;i<b;++i)
+#define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
+#define ln 		"\n"
 #define mp make_pair
+#define pb push_back
+#define sz(a)	ll(a.size())
+#define debug1(x) cout<<x<<endl
+#define debug2(x,y) cout<<x<<"-->"<<y<<endl
+#define debug3(x,y,z) cout<<x<<"-->"<<y<<"-->"<<z<<endl
+#define F first
+#define S second
+#define all(c)	c.begin(),c.end()
+#define trace(c,x) for(auto &x:c)
+#define pii pair<ll,ll>
 typedef long long ll;
 typedef long double ld;
-const int L=1e5;
-std::map<int, int> counter;
-set<int> SET;
-pair<int,string> PAIR;
-#define sz(a)	ll(a.size()) 
-#define ln "\n"
-int m=1000000007;
-ll arr[100002];
-ll seg[4000002]
-void build(int s,int e,int index)
+typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
+const int L=1e5+7;
+ll baseArray[L], seg[4*L],size_of_base;
+map<ll,ll> counter;
+ll fastexpo(ll x,ll y,ll m)
 {
-	if(s>=e)
+	ll temp=1;
+	while(y>0)
 	{
-		seg[index]=arr[s];
+		if(y&1)temp = ((temp%m)*(x%m))%m;
+		x = ((x%m)*(x%m))%m;
+		y>>=1;
+	}return temp;
+}
+void build(int start = 1, int end = size_of_base, int index = 1)
+{
+	if( start == end )
+	{
+		seg[index] = baseArray[start];
 		return;
 	}
-	int mid=(s+e)/2;
-	build(s,mid,index<<1);
-	build(mid+1,e,(index<<1)+1);
-	seg[index]=seg[index<<1]+seg[(index<<1)+1];
+	int mid = (start + end)/2;
+	build(start, mid, 2*index);
+	build(mid+1, end, 2*index + 1);
+	seg[index] = min( seg[ 2*index ] , seg[ 2*index + 1] );
 	return;
 }
-ll query(int s,int e,int l,int r,int index)
+void update(int updateindex, int start = 1, int end = size_of_base, int index = 1)
 {
-	if(e<l || s>r )return INT_MIN;
-	if(s>=l && e<=r)
+	if(updateindex < start || updateindex > end)return;
+	if( start == end && updateindex == start )
+	{
+		seg[index] = baseArray[start];
+		return;
+	}
+	int mid = (start + end)/2;
+	update(updateindex, start, mid, 2*index );
+	update(updateindex, mid+1, end, 2*index + 1);
+	seg[index] = min( seg[ 2*index ] , seg[ 2*index + 1] );
+	return;
+}
+int query(int l, int r, int start = 1, int end = size_of_base, int index = 1)
+{
+	if( start > r || end < l )return INT_MAX;
+	if(start >= l && end <= r)
+	{
 		return seg[index];
-	int q1,q2,mid=(s+e)/2;
-	q1=query(s,mid,l,r,index<<1);
-	q2=query(mid+1,e,l,r,(index<<1)+1);
-	return q1+q2;
-}
-void update(int s,int e,int index,int updind)
-{
-	if(updind<s||updind>e)return;
-	if(updind==s && updind==e)
-	{
-		seg[index]=arr[s];
-		return;
 	}
-	int mid=(s+e)/2;
-	if(updind<=mid)
-		update(s,mid,index<<1,updind);
-	else
-		update(mid+1,e,(index<<1)+1,updind);
-	seg[index]=seg[index<<1]+seg[(index<<1)+1];
-	return;
+	int mid = (start + end)/2, query_left, query_right;
+	query_left = query(l, r, start, mid, 2*index );
+	query_right = query(l, r, mid+1, end, 2*index + 1);
+	return min(query_left, query_right);
 }
-
-
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	build(1,n,1);
+	int operations, idx, value, l, r;
+	char type;
+	cin>>size_of_base;
+	for (int i = 1; i <= size_of_base; ++i)
+		cin>>baseArray[i];
+	
+	build();
+	while( operations-- )
+	{
+		cin>>type;
+		if( type == 'Q' )
+		{
+			cin >> l >> r;
+			cout<<query(l, r)<<endl;
+		}
+		else if( type == 'U' )
+		{
+			cin >> idx >> value;
+			baseArray[idx] = value;
+			update(idx);
+		}
+	}
 	return 0;
 }
