@@ -18,7 +18,7 @@ typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 const int L=1e5+1;
-ll out[L],color[L],start[L],ending[L],tim=1,base[L],co[L];
+ll out[L],color[L],start[L],ending[L],tim=1,base[L],co[L],counter[L];
 std::vector<int> v[L];
 void eulerTour(int vertex,int parent)
 {
@@ -32,7 +32,6 @@ struct node
 {
 	ll l,r,k,q;
 };
-int counter[L];
 bool comp(node x, node y)
 {
 	return x.r<y.r;
