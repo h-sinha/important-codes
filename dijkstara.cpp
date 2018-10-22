@@ -69,18 +69,18 @@ int main()
 	while(sz(qq))
 	{
 		temp=qq.top();
-		ll node=temp.second;
-		ll wt=temp.first;
+		ll node=temp.S;
+		ll wt=temp.F;
 		visit[node]=1;
 		qq.pop();
 		for(auto &x:v[node])
 		{
-			if(dist[x.second]>=dist[node]+x.first)
+			if(dist[x.S]>=dist[node]+x.F)
 			{
 				//In case of negative cycle break
-				if(visit[x.first]){f=1;break;}
-				dist[x.second]=dist[node]+x.first;
-				x.first=dist[x.second];
+				if(visit[x.F]){f=1;break;}
+				dist[x.S]=dist[node]+x.F;
+				x.F=dist[x.S];
 				qq.push(x);
 			}
 		}
