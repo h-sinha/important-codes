@@ -85,8 +85,16 @@ int query(node *root,int num)
 	RFOR(i,31,0)
 	{
 		int temp=1 & (num>>i);
-		if(root->child[1-temp]!=NULL && root->child[1-temp]->freq>0){root=root->child[1-temp];ans+=(1-temp)<<i;}
-		else {root=root->child[temp];ans+=temp<<i;}
+		if(root->child[1-temp]!=NULL && root->child[1-temp]->freq>0)
+		{
+			root=root->child[1-temp];
+			ans+=(1-temp)<<i;
+		}
+		else 
+		{
+			root=root->child[temp];
+			ans+=temp<<i;
+		}
 	}	
 	return ans^num;
 }

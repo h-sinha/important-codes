@@ -40,7 +40,7 @@ ll fastexpo(ll x,ll y,ll m)
 		y>>=1;
 	}return temp;
 }
-int t=1,m=1;
+int timeis=1,m=1;
 std::vector<int> v[100002];
 std::vector<bool> visit(100002);
 int distanceroot[100002],start[100002],arr[100002];
@@ -77,15 +77,17 @@ int query(int s,int e,int l,int r,int x,int index)
 	int q2=query(mid+1,e,l,r,x,(index<<1)+1);
 	return q1+q2;
 }
-int dfs(int vertex,int dist)
+int dfs(int vertex,int parent, int vertex)
 {
-	if(visit[vertex])return 0;
-	start[vertex]=t;
-	arr[t]=vertex;
-	t++;
+	start[vertex]=timeis;
+	arr[timeis]=vertex;
+	timeis++;
 	distanceroot[vertex]=dist+1;
-	FOR(i,0,sz(v[vertex]))
-		dfs(v[vertex][i],dist+1);
+	trace(v[vertex],x)
+	{
+		if(x==parent)continue;
+		dfs(x, vertex, dist+1);
+	}
 }
 int main()
 {
@@ -99,7 +101,7 @@ int main()
 		v[a].pb(b);
 		v[b].pb(a);
 	}
-	dfs(1,-1);
-	build(1,t-1,1);
+	dfs(1,-1,-1);
+	build(1,timeis-1,1);
 	return 0;
 }

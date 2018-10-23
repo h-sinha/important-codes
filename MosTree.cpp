@@ -84,20 +84,20 @@ int main()
 	 	}
 	 	eulerTour(1,-1);
 	 	FOR(i,1,n+1)base[start[i]]=color[i];
-	 	std::vector<node> v[n/316 + 5];
+	 	std::vector<node> qq[n/316 + 5];
 	 	node temp;
 	 	FOR(i,0,m)
 		{
 			cin>>l>>r;
 			temp.l=start[l], temp.r=ending[l],temp.k=r,temp.q=i;
-			v[start[l]/316].pb(temp);
+			qq[start[l]/316].pb(temp);
 		}
-		FOR(i,0,n/316 +1)sort(all(v[i]),comp);
+		FOR(i,0,n/316 +1)sort(all(qq[i]),comp);
 		FOR(i,0,n/316 + 3)
 		{
 			l=r=i*316;
 			add(base[l]);
-			trace(v[i],x)
+			trace(qq[i],x)
 			{
 				while(l<x.l)
 				{

@@ -40,8 +40,8 @@ ll fastexpo(ll x,ll y,ll m)
 		y>>=1;
 	}return temp;
 }
-std::vector<int> adj[100002];
-int level[100002],u[100002],v[100002],parent[100002][22],mark[100002];
+std::vector<int> adj[L];
+int level[L],u[L],v[L],parent[L][22],mark[L];
 void dfs(int vertex,int pr,int lvl)
 {
 	parent[vertex][0]=pr;

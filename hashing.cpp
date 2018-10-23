@@ -65,9 +65,9 @@ int main()
 	 		cin>>s[i];
 	 		len[i]=s[i].length();
 	 		if(i)cumsum[i]=cumsum[i-1]+1+len[i-1];
-	 		cur=cur+s[i];
+	 		cur+=s[i];
 	 		lengthis+=len[i];
-	 		cur=cur+" ";
+	 		cur+=" ";
 	 	}
 	 	powerf[0]=powerr[0]=1;
 	 	FOR(i,1,100001)
@@ -75,12 +75,13 @@ int main()
 	 		powerf[i] = ( powerf[i-1]%m *97 )%m;
 	 		powerr[i] = ( powerr[i-1]%m *53 )%m;
 	 	}
+	 	// cout<<cur<<ln;
 	 	lengthis+=n-1;
 	 	ans=lengthis;
 	 	fwdhash[0]=(powerf[0]%m * cur[0]%m)%m;
 	 	FOR(i,1,lengthis)
 	 		fwdhash[i]=(fwdhash[i-1]%m + (powerf[i]%m * cur[i]%m)%m )%m;
-	 	RFOR(i,1,lengthis)
+	 	RFOR(i,lengthis - 1,1)
 	 		revhash[i]=(revhash[i-1]%m + (powerr[i]%m * cur[i]%m)%m )%m;
 	 	FOR(i,0,n)
 	 	{
@@ -91,7 +92,7 @@ int main()
 	 			else dp1[i][j] = fwdhash[r]%m; 
 	 			
 	 			dp2[i][j] =( (revhash[l]%m - revhash[r+1]%m + m)%m * fastexpo(powerr[r],m-2)%m )%m; 
-
+	 			debug(dp1[i][j],dp2[i][j]);
 	 		}
 	 	}
 		return 0;
