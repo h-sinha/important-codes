@@ -56,7 +56,7 @@ int lca(int a,int b)
 	int index=0;
 	while(dist>0)
 	{
-		if(dist&1){b=parent[b][index];}
+		if(dist&1)b=parent[b][index];
 		dist>>=1;index++;
 	}
 	

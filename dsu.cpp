@@ -1,4 +1,7 @@
 #include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 #define DEBUG
 #ifdef DEBUG
@@ -28,7 +31,15 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
-const int L=1e5+7;
+
+typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+// ordered_set X
+//K-th smallest
+//*X.find_by_order(k-1)
+//NO OF ELEMENTS < A
+//X.order_of_key(A)
+
+const int L=1e6+7;
 map<ll,ll> counter;
 ll fastexpo(ll x,ll y,ll m)
 {
@@ -40,36 +51,49 @@ ll fastexpo(ll x,ll y,ll m)
 		y>>=1;
 	}return temp;
 }
-ll parent[100005],freq[100005],size[100005];
-int co=0,tot=0;
-set<ll>SET;
-std::vector<ll> b;
-ll find(int x)
+int children[L], comp[L], parent[L];
+int component(int x)
 {
-    if(parent[x]==x)return x;
-    parent[x]=find(parent[x]);
-    return parent[x];
+	if(parent[x] == x)return x;
+	return parent[x] = component(parent[x]);
 }
-void un(ll x,ll y)
+void merge(int a, int b)
 {
-    ll px=find(x);
-    ll py=find(y);
-    // if(px==py)return;
-    // --freq[size[px]];
-    // if(freq[size[px]]==0)SET.erase(size[px]);
-    //  --freq[size[py]];
-    // if(freq[size[py]]==0)SET.erase(size[py]);
-    size[px]+=size[py];
-    parent[py]=px;
-    // freq[size[px]]++;
-    // if(freq[size[px]]==1)
-    // SET.insert(size[px]);
-    return ;
-
+	int pa = component(a);
+	int pb = component(b);
+	if(children[pa] > children[pb])
+	{
+		children[pb] += children[pa];
+		parent[pa] = pb;
+	}
+	else
+	{
+		children[pa] += children[pb];
+		parent[pb] = pa;
+	}
+	return;
 }
 int main()
 {
-        ios_base::sync_with_stdio(false);
-        cin.tie(NULL),cout.tie(NULL);
-        return 0;
+	int n, m, a, b, type;
+	cin >> n ;
+	for (int i = 1; i <= n ; ++i)
+	{
+		parent[i] = i;
+		children[i] = 1;
+	}
+	for (int i = 0; i < 10; ++i)
+	{
+		cin >> type;
+		if(type == 1)
+		{
+			cin >> a >> b;
+			merge(a, b);
+		}
+		else 
+		{
+			cin >> a;
+			cout<<component(a)<<endl;
+		}
+	}
 }
