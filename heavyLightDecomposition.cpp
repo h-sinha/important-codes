@@ -1,4 +1,7 @@
 #include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 #define DEBUG
 #ifdef DEBUG
@@ -28,82 +31,73 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
-map<ll,ll> counter;
-ll fastexpo(ll x,ll y,ll m)
-{
-	ll temp=1;
-	while(y>0)
-	{
-		if(y&1)temp = ((temp%m)*(x%m))%m;
-		x = ((x%m)*(x%m))%m;
-		y>>=1;
-	}return temp;
-}
-const int N=1e5+7;
-vector <int> adj[N], costs[N], indexx[N];
-int baseArray[N], ptr;
+
+typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+// ordered_set X
+//K-th smallest
+//*X.find_by_order(k-1)
+//NO OF ELEMENTS < A
+//X.order_of_key(A)
+
+const int N=2e5+7;
+vector <int> adj[N],  indexx[N];
+std::vector<ld> costs[N];
+ld baseArray[N];
+int ptr;
 int chainNo, chainIndex[N], chainHead[N], posInBase[N];
-int depth[N], parent[N][20], otherEnd[N], subsize[N];
-int seg[N*6], queryarr[N*6];
-void build(int s, int e,int index) 
+int depth[N], parent[N][25], otherEnd[N], subsize[N];
+ld seg[N*6];
+void build(int s = 0, int e = ptr, int index = 1) 
 {
 	if(s == e-1) 
 	{
 		seg[index] = baseArray[s];
 		return;
 	}
-	int mid=(s+e)>>1;
-	build(s,mid,index<<1);
-	build(mid,e,(index<<1)+1);
-	seg[index]=max(seg[index<<1],seg[(index<<1)+1]);
+	int mid = (s+e)>>1;
+	build(s, mid, index<<1);
+	build(mid, e, (index<<1)+1);
+	seg[index]=(seg[index<<1] *seg[(index<<1)+1]);
 }
-void updateseg(int s,int e,int index,int pos, int val) 
+void updateseg(int pos, ld val, int s = 0, int e = ptr, int index = 1) 
 {
-	if(s>pos || e<=pos) return;
-	if(s==pos && s==e-1) 
+	if(s > pos || e <= pos) return;
+	if(s == pos && s == e-1) 
 	{
-		seg[index]=val;
+		seg[index] = val;
 		return;
 	}
-	int mid=(s+e)>>1;
-	updateseg(s,mid,index<<1,pos,val);
-	updateseg(mid,e,(index<<1)+1,pos,val);
-	seg[index]=max(seg[index<<1],seg[(index<<1)+1]);
+	int mid = (s+e)>>1;
+	updateseg(pos, val, s, mid, index<<1);
+	updateseg(pos, val, mid, e, (index<<1)+1);
+	seg[index] = (seg[index<<1] * seg[(index<<1)+1]);
 	return;
 }
-void queryseg(int s,int e,int index,int l,int r) 
+ld queryseg(int l, int r, int s = 0, int e = ptr, int index = 1) 
 {
-	if(s>=r || e<=l) 
-	{
-		queryarr[index]=-1;
-		return;
-	}
-	if(s>=l && e<=r) 
-	{
-		queryarr[index]=seg[index];
-		return;
-	}
-	int mid=(s+e)>>1;
-	queryseg(s,mid,index<<1,l,r);
-	queryseg(mid,e,(index<<1)+1,l,r);
-	queryarr[index]=max(queryarr[index<<1],queryarr[(index<<1)+1]);
+	if(s >= r || e <= l) 
+		return 1.0;
+	if(s >= l && e <= r) 
+		return seg[index];
+	int mid = (s+e)>>1;
+	ld query_left = queryseg(l, r, s, mid, index<<1);
+	ld query_right = queryseg(l, r, mid, e, (index<<1)+1);
+	return query_left * query_right;
 }
-int queryup(int u, int v) 
+ld queryup(int u, int v) 
 {
-	if(u==v) return 0;
-	int uchain,vchain = chainIndex[v], ans = -1;
+	if(u == v) return 1;
+	int uchain, vchain = chainIndex[v];
+	ld ans = 1.0;
 	while(1) 
 	{
 		uchain = chainIndex[u];
 		if(uchain == vchain) 
 		{
-			if(u==v) break;
-			queryseg(0,ptr,1,posInBase[v]+1,posInBase[u]+1);
-			ans=max(ans,queryarr[1]);
-			break;
+			if(u == v) break;
+			return ans *= queryseg(posInBase[v]+1,posInBase[u]+1);
 		}
-		queryseg(0,ptr,1,posInBase[chainHead[uchain]],posInBase[u]+1);
-		ans=max(ans,queryarr[1]);
+		ans *= queryseg(posInBase[chainHead[uchain]],posInBase[u]+1);
 		u = chainHead[uchain]; 
 		u = parent[u][0]; 
 	}
@@ -112,16 +106,17 @@ int queryup(int u, int v)
  
 int LCA(int u, int v) 
 {
-	if(depth[u]>depth[v])swap(u,v);
-	int dist=depth[v]-depth[u];
-	int index=0;
-	while(dist>0)
+	if(depth[u] > depth[v])swap(u,v);
+	int dist = depth[v] - depth[u];
+	int index = 0;
+	while(dist > 0)
 	{
-		if(dist&1)v=parent[v][index];
-		dist>>=1;index++;
+		if(dist & 1)v = parent[v][index];
+		dist >>= 1;
+		index++;
 	}
 	
-	RFOR(i,15,0)
+	RFOR(i,19,0)
 	{
 		if(parent[u][i]!=-1 && parent[u][i]!=parent[v][i])
 		{
@@ -129,22 +124,22 @@ int LCA(int u, int v)
 			v=parent[v][i];
 		}
 	}
-	if(u==v)return u;
+	if(u == v)return u;
 	return parent[u][0];
 }
-void query(int u, int v) 
+void query(int u, int v,ld val) 
 {
 	int lca = LCA(u, v);
-	int ans = queryup(u,lca);
-	int temp = queryup(v,lca); 
-	cout<<max(temp,ans)<<ln;
+	ld ans = queryup(u,lca);
+	ld temp = queryup(v,lca);
+	cout<<ll(floor(floor(val/ans)/ temp))<<ln;
 }
-void change(int i, int val) 
+void change(int i, ld val) 
 {
 	int u = otherEnd[i];
-	updateseg(0,ptr,1,posInBase[u], val);
+	updateseg(posInBase[u], val);
 }
-void HLD(int curNode, int cost, int prev) 
+void HLD(int curNode, ld cost, int prev) 
 {
 	if(chainHead[chainNo] == -1) 
 	{
@@ -154,7 +149,8 @@ void HLD(int curNode, int cost, int prev)
 	posInBase[curNode] = ptr; 
 	baseArray[ptr++] = cost;
  
-	int special = -1,ncost;
+	int special = -1;
+	ld ncost;
 	FOR(i,0,sz(adj[curNode]))
 	{
 		if(adj[curNode][i] != prev) 
@@ -197,57 +193,50 @@ void dfs(int vertex,int prev,int _depth)
 }
 int main() 
 {
-	int t,u,v,c;
-	cin>>t;
-	while(t--) 
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL),cout.tie(NULL);
+
+	int t,u,v,n,type;
+	ld c;
+	cin >> n >> t;
+	ptr = 0;
+	FOR(i,0,n)
 	{
-		ptr = 0;
-		int n;
-		cin>>n;
-		FOR(i,0,n)
-		{
-			adj[i].clear();
-			costs[i].clear();
-			indexx[i].clear();
-			chainHead[i] = -1;
-			FOR(j,0,18)parent[i][j] = -1;
-		}
-		FOR(i,1,n)
-		{
-			cin>>u>>v>>c;
-			u--,v--;
-			adj[u].push_back(v);
-			costs[u].push_back(c);
-			indexx[u].push_back(i-1);
-			adj[v].push_back(u);
-			costs[v].push_back(c);
-			indexx[v].push_back(i-1);
-		}
-		chainNo = 0;
-		dfs(0, -1,0); 
-		HLD(0, -1, -1); 
-		build(0,ptr,1); 
-		FOR(j,1,19)
-	 		FOR(i,1,n+1)
-	 			if(parent[i][j-1]!=-1)
+		chainHead[i] = -1;
+		FOR(j,0,20)parent[i][j] = -1;
+	}
+	FOR(i,1,n)
+	{
+		cin >> u >> v >> c;
+		u--,v--;
+		adj[u].push_back(v);
+		costs[u].push_back(c);
+		indexx[u].push_back(i-1);
+		adj[v].push_back(u);
+		costs[v].push_back(c);
+		indexx[v].push_back(i-1);
+	}
+	chainNo = 0;
+	dfs(0, -1,0); 
+	HLD(0, -1, -1); 
+	build(); 
+	FOR(j,1,20)
+ 		FOR(i,1,n+1)
+ 			if(parent[i][j-1]!=-1)
 	 				parent[i][j]=parent[parent[i][j-1]][j-1];
- 
-		while(1) 
+	while(t--)
+	{
+		cin >> type;
+		if(type == 1)
 		{
-			char s[100];
-			scanf("%s", s);
-			if(s[0]=='D') 
-			{
-				break;
-			}
-			int a, b;
-			scanf("%d %d", &a, &b);
-			if(s[0]=='Q') {
-				query(a-1, b-1);
-			} else 
-			{
-				change(a-1, b);
-			}
+			cin >> u >> v >> c;
+			query(--u,--v,c);
+		}
+		else
+		{
+			cin >> u >> c;
+			change(--u,c);
 		}
 	}
+	return 0;
 } 
