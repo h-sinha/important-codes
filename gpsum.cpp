@@ -1,4 +1,7 @@
 #include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 #define DEBUG
 #ifdef DEBUG
@@ -28,8 +31,17 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
-const int L=1e5+7;
+
+typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+// ordered_set X
+//K-th smallest
+//*X.find_by_order(k-1)
+//NO OF ELEMENTS < A
+//X.order_of_key(A)
+
+const int L=1e6+7;
 map<ll,ll> counter;
+ll m = 1e9+7;
 ll fastexpo(ll x,ll y,ll m)
 {
 	ll temp=1;
@@ -40,57 +52,18 @@ ll fastexpo(ll x,ll y,ll m)
 		y>>=1;
 	}return temp;
 }
-set<int> SET;
-pair<int,string> PAIR;
-#define sz(a)	ll(a.size()) 
-#define ln "\n"
-std::vector<bool> visit(100002);
-std::vector<ll> dist(100002);
-std::vector<pii> v[100002];
-ll nodeflag[100002],modu=1000000007,flag=0;
-priority_queue<pii,std::vector<pii>,greater<pii> > qq;
-int myrandom (int i) { return std::rand()%i;}
+// take cr and highest power as parameter
+// for 1 + a + a^2 + a^2 , n = 2
+ll gpsum(ll a, ll n)
+{
+	if(n == 0)return 1LL;
+	if(n == 1)return (1+a)%m;
+	if(n&1)return (((1+a)%m) * gpsum((a*a) % m, n/2))%m;
+	else return (1 + (((a*(a+1))%m) * gpsum((a*a)%m,n/2 - 1))%m)%m;
+}
 int main()
 {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
-	ll f=0,n,m,source,target,a,b,c;
-	cin>>n>>m;
-	cin>>source>>target;
-	while(m--)
-	{
-			cin>>a>>b>>c;
-			v[a].pb(mp(c,b));
-			v[b].pb(mp(c,a));
-	}
-	fill(dist.begin(), dist.end(),LLONG_MAX);
-	dist[source]=0;
-	pii temp;
-	qq.push(mp(0,source));
-	while(sz(qq))
-	{
-		temp=qq.top();
-		ll node=temp.S;
-		ll wt=temp.F;
-		visit[node]=1;
-		qq.pop();
-		for(auto &x:v[node])
-		{
-			if(dist[x.S]>=dist[node]+x.F)
-			{
-				//In case of negative cycle break
-				if(visit[x.F]){f=1;break;}
-				dist[x.S]=dist[node]+x.F;
-				x.F=dist[x.S];
-				qq.push(x);
-			}
-		}
-		//Negative cycle
-		if(f)break;
-	}
-	if(dist[target]==LLONG_MAX || f)cout<<"-1"<<ln;
-	else cout<<dist[target]<<ln;
-	return 0;
-
+		ios_base::sync_with_stdio(false);
+	 	cin.tie(NULL);
+		return 0;
 }
-	

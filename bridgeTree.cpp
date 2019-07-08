@@ -47,10 +47,13 @@ int u[L], v[L]; // storing original graph
 int cur_comp, comp[L]; // for components in bridge tree
 int isBridge[L]; //stores if edge is bridge or not
 queue<int>q[L]; // queue for performing bfs
+
+// finds adjacent vertex
 int find_next(int i,int vertex)
 {
 	return ((u[i] == vertex) ? v[i] : u[i]);
 }
+// finds all bridges
 int dfs0(int vertex, int edge)
 {
 	ar[vertex] = ++start;
@@ -71,6 +74,8 @@ int dfs0(int vertex, int edge)
 	}
 	return cur;
 }
+
+// makes bridge tree
 void dfs1(int vertex)
 {
 	visit1[vertex] = 1;
