@@ -1,4 +1,7 @@
 #include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 #define DEBUG
 #ifdef DEBUG
@@ -28,81 +31,44 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
+
+typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+// ordered_set X
+//K-th smallest
+//*X.find_by_order(k-1)
+//NO OF ELEMENTS < A
+//X.order_of_key(A)
+
 const int L=1e6+7;
-map<ll,ll> counter;
-ll fastexpo(ll x,ll y,ll m)
+int partition(std::vector<int> &a, int l, int r)
 {
-	ll temp=1;
-	while(y>0)
+	int i = l;
+	FOR(j,l,r+1)
 	{
-		if(y&1)temp = ((temp%m)*(x%m))%m;
-		x = ((x%m)*(x%m))%m;
-		y>>=1;
-	}return temp;
-}
-std::vector<int> lps;
-void preprocess(string s)
-{
-	int len = s.length(), j = 0;
-	lps.push_back(0);
-	for (int i = 1; i < len; ++i)
-	{
-		if(s[i]==s[j])
+		if(a[j] < a[l])
 		{
-			j++;
-			lps.push_back(j);
-		}
-		else
-		{
-			if(j == 0)
-			{
-				lps.push_back(0);
-			}
-			else
-			{
-				while(j > 0 && s[i] != s[j])
-				{
-					j = lps[j-1];
-				}
-				if(s[i] == s[j])
-				{
-					j++;
-				}
-				lps.push_back(j);
-			}
+			swap(a[j], a[++i]);
 		}
 	}
-	return;
+	swap(a[l], a[i]);
+	return i;
+}
+void quick_sort(std::vector<int> &a, int l, int r)
+{
+	if(l>=r)return;
+	int p = partition(a, l, r);
+	quick_sort(a, l, p-1);
+	quick_sort(a, p+1, r);
 }
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	string text, pattern;
-	cin >> text;
-	cin >> pattern;
-	preprocess(pattern);
-	int text_length = text.length(), pattern_length = pattern.length();
-	int cur = 0;
-	for (int i = 0; i < text_length; ++i)
-	{
-		if(text[i] == pattern[cur])
-		{
-			cur++;
-		}
-		else 
-		{
-			if(cur != 0)
-			{
-				cur = lps[cur - 1];
-				i--;
-			}
-		}
-		if(cur == pattern_length)
-		{
-			cout << i - cur + 1 << " ";
-			cur = lps[cur - 1];
-		}
-	}
+	int n;
+	cin >> n;
+	std::vector<int> a(n);
+	FOR(i,0,n)cin >> a[i];
+	quick_sort(a, 0, n-1);
+	FOR(i,0,n)cout << a[i] << " ";
 	return 0;
 }

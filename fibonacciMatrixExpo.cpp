@@ -28,7 +28,7 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef    priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
-const int L=1e5+7;
+const int L=1e6+7;
 map<ll,ll> counter;
 ll fastexpo(ll x,ll y,ll m)
 {

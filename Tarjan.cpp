@@ -39,7 +39,7 @@ typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e5+7;
+const int L=1e6+7;
 int id[L],lowLink[L];
 stack <int> STACK;
 std::vector<int> v[L];

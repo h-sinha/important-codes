@@ -29,7 +29,7 @@ typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 typedef std::complex<double> Complex;
-const int L=1e5+7;
+const int L=1e6+7;
 const double PI = 3.141592653589793238460;
 map<ll,ll> counter;
 ll fastexpo(ll x,ll y,ll m)

@@ -28,7 +28,7 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
-const int L=1e5+7;
+const int L=1e6+7;
 map<ll,ll> counter;
 ll fastexpo(ll x,ll y,ll m)
 {
@@ -40,8 +40,12 @@ ll fastexpo(ll x,ll y,ll m)
 		y>>=1;
 	}return temp;
 }
-ll size_of_base;
+ll size_of_base, inf;
 std::vector<ll> baseArray(L),seg(4*L),lazy(4*L);
+ll combine(ll a, ll b)
+{
+	return (a+b);
+}
 void build(int start = 1, int end = size_of_base, int index = 1)
 {
 	if( start == end )
@@ -52,7 +56,7 @@ void build(int start = 1, int end = size_of_base, int index = 1)
 	int mid = (start + end)/2;
 	build(start, mid, 2*index);
 	build(mid+1, end, 2*index + 1);
-	seg[index] = (seg[2*index] + seg[2*index + 1]);
+	seg[index] = combine(seg[2*index] , seg[2*index + 1]);
 	return;
 }
 void lazyUpdate(int start, int end, int index)
@@ -86,20 +90,20 @@ void updateRange(int l, int r, ll value, int start = 1, int end = size_of_base, 
 	int mid = (start + end)/2;
 	updateRange(l, r, value, start, mid, 2*index );
 	updateRange(l, r, value, mid+1, end, 2*index + 1);
-	seg[index] = (seg[2*index] + seg[2*index + 1]) ;
+	seg[index] = combine(seg[2*index] , seg[2*index + 1]) ;
 	return;
 }
 ll query(int l, int r, int start = 1, int end = size_of_base, int index = 1)
 {
 	lazyUpdate(start, end, index);
 	if( start > r || end < l || start > end)
-		return 0;
+		return inf;
 	if(start >= l && end <= r)
 		return seg[index];
 	int mid = (start + end)/2, query_left, query_right;
 	query_left = query(l, r, start, mid, 2*index );
 	query_right = query(l, r, mid+1, end, 2*index + 1);
-	return (query_left + query_right);
+	return combine(query_left , query_right);
 }
 int main()
 {
@@ -108,6 +112,7 @@ int main()
 	ll operations, idx, value, l, r;
 	char type;
 	cin >> size_of_base;
+	inf = 0;
 	for (ll i = 1; i <= size_of_base; ++i)
 		cin >> baseArray[i];
 	build();
