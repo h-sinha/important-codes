@@ -30,16 +30,6 @@ typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 const int L=1e6+7;
 map<ll,ll> counter;
-ll fastexpo(ll x,ll y,ll m)
-{
-	ll temp=1;
-	while(y>0)
-	{
-		if(y&1)temp = ((temp%m)*(x%m))%m;
-		x = ((x%m)*(x%m))%m;
-		y>>=1;
-	}return temp;
-}
 struct node
 {
 	node *child[2];
